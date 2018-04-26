@@ -320,7 +320,7 @@ $ mkdir faas-lab
 
 And our first function to deploy `hellosummit.js`:
 
-[source,json,subs=attributes+]
+[source,js,subs=attributes+]
 ----
 function main() {
     return {payload: 'Hello RH Summit 2018!'};
