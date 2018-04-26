@@ -143,7 +143,7 @@ image::openshift.png[Projects Overview]
 
 image::openwhisk-project.png[OpenWhisk components running in OpenShift]
 
-. Verify accessibility to OpenWhisk Route from Left side menu *Applications*->*Routes*->*openwhisk* and click on the URL you see
+. Verify accessibility to OpenWhisk Route from Left side menu *Applications*-> *Routes* -> *openwhisk* and click on the URL you see
 
 image::openwhisk.png[OpenWhisk REST endpoint]
 
@@ -233,5 +233,40 @@ actions
 triggers
 rules
 ----
+
+== Serverless implementation
+
+=== Actions
+
+In OpenWhisk functions can be represented by *Actions*, stateless code snippets that run on the OpenWhisk platform. An action can be written as a JavaScript, Swift, Python or PHP function, a Java method, any binary-compatible executable including Go programs and custom executables packaged as Docker containers.
+
+You can start invoking your first Action from the list shown in the OpenWhisk catalog before:
+
+----
+$ wsk -i action invoke /whisk.system/utils/echo -p message hello -b
+----
+
+Under the hood OpenShift will create new Pods with the proper runtime to run such functions, with a number proportional to the load required and depending of configuration desired, by default
+
+----
+wskinvoker-00-7-whisksystem-echo              1/1       Running     0          25s
+wskinvoker-00-8-whisksystem-echo              1/1       Running     0          20s
+----
+
+image::nodejspod.png[OpenWhisk JavaScript Runtime as NodeJS Pod]
+
+
+==== JavaScript Actions
+
+==== Java Actions
+
+==== Python Actions
+
+
+
+Actions can be explicitly invoked, or run in response to an event. In either case, each run of an action results in an activation record that is identified by a unique activation ID. The input to an action and the result of an action are a dictionary of key-value pairs, where the key is a string and the value a valid JSON value. Actions can also be composed of calls to other actions or a defined sequence of actions.
+
+=== Triggers and Rules
+
 
 
