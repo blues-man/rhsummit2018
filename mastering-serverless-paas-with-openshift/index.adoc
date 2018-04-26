@@ -54,7 +54,69 @@ To save time a pre-deployed appliance is provided of 4 Nodes, 1 Master and 3 App
 
 OpenWhisk will run as containerized inside OpenShift, from official image on Docker Hub, properly tagged for OCP (rhdemo-b7724ef)
 
-= Lab OpenWhisk on OpenShift Architecture
+=== Environment
+
+The demo environment consists of the following systems:
+
+[cols="3",options="header"]
+|=======
+|Hostname              |Internal IP    |Description
+|`workstation.example.com` |`192.168.0.5`  | Bastion host
+|`master.example.com`  |`192.168.0.10` | Master
+|`node01.example.com`  |`192.168.0.11` | Node 01
+|`node02.example.com`  |`192.168.0.12` | Node 02
+|`node03.example.com`  |`192.168.0.13` | Node 03
+|=======
+
+
+NOTE: HAProxy is running on the *workstation* machine.  This provides a level of port forwarding to allow access to the OpenShift console and the JBoss application and other services running on OpenShift to overcome some DNS and routing limitations in the underlying Ravello environment.  This includes port 80, 8443 and 8080-8085.
+
+=== Access your Lab Environment
+
+
+Every attendee gets her/his own lab environment. The lab environments are already started, to access your lab you need a unique *GUID* that is part of the hostnames.
+
+The web browser of your laptop should default to https://www.opentlc.com/guidgrabber/guidgrabber.cgi. On this web page select the lab your attending and enter the activation key that will be given by the instructor. After submitting your input by clicking "Next" you will see the attendee welcome screen with the needed information:
+
+* Your unique lab *GUID*
+* A link to the lab guide 
+* The hostnames / URLs you will access
+* A link to the status page
+
+=== To access your control host:
+
+* Make sure you have your *GUID*
+* Open a terminal session
+* Log in to your control host:
+
+----
+ssh workstation-<GUID>.rhpds.opentlc.com
+----
+
+WARNING: *Replace <number> with the GUID assigned to your seat!*
+
+Example: If your GUID is "12e4", do this:
+----
+ssh lab-user@workstation-12e4.rhpds.opentlc.com
+----
+
+TIP: The user will default to `lab-user` and SSH key authentication will be used automatically.
+[IMPORTANT]
+====
+* It takes about 15-20 minutes for the demo to load completely and become accessible.
+** Wait for the full demo to load, even if some of its systems are marked "Up."
+* Watch for an email with information about how to access your demo environment.
+** Make note of the email's contents: a list of hostnames, IP addresses, and your GUID.
+** Whenever you see GUID in the demo instructions, replace it with the GUID provided in the email.
+* You can get real-time updates of your demo environment at https://www.opentlc.com/rhpds-status.
+====
++
+[TIP]
+Be mindful of the runtime of your demo environment! It may take you longer than the 3 hours allotted to complete the demo, so you may need to extend the runtime. This is especially important in later steps when you are building virtual machines. For information on how to extend runtime and lifetime, see https://www.opentlc.com/lifecycle.
+
+
+
+== Lab OpenWhisk on OpenShift Architecture
 
 image::lab-architecture.png[Lab Architecture]
 
