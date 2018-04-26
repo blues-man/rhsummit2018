@@ -155,7 +155,7 @@ image::openwhisk.png[OpenWhisk REST endpoint]
 SSH to your Lab Workstation
 
 ----
-ssh lab-uswe@workstation-<GUID>.rhpds.opentlc.com
+ssh lab-user@workstation-<GUID>.rhpds.opentlc.com
 ----
 
 Login to OpenShift through OpenShift CLI using `developer` for the username and `redhatsummit2018` for the password, with this command password will be prompted:
@@ -240,13 +240,15 @@ rules
 
 In OpenWhisk functions can be represented by *Actions*, stateless code snippets that run on the OpenWhisk platform. An action can be written as a JavaScript, Swift, Python or PHP function, a Java method, any binary-compatible executable including Go programs and custom executables packaged as Docker containers.
 
+Actions can be explicitly invoked, or run in response to an event. In either case, each run of an action results in an activation record that is identified by a unique activation ID. The input to an action and the result of an action are a dictionary of key-value pairs, where the key is a string and the value a valid JSON value. Actions can also be composed of calls to other actions or a defined sequence of actions.
+
 You can start invoking your first Action from the list shown in the OpenWhisk catalog before:
 
 ----
 $ wsk -i action invoke /whisk.system/utils/echo -p message hello -b
 ----
 
-Under the hood OpenShift will create new Pods with the proper runtime to run such functions, with a number proportional to the load required and depending of configuration desired, by default
+Under the hood OpenShift will create new Pods with the proper runtime to run such functions, with a number proportional to the load required and depending of configuration desired.
 
 ----
 wskinvoker-00-7-whisksystem-echo              1/1       Running     0          25s
@@ -255,6 +257,45 @@ wskinvoker-00-8-whisksystem-echo              1/1       Running     0          2
 
 image::nodejspod.png[OpenWhisk JavaScript Runtime as NodeJS Pod]
 
+Looking at action invokation output we can see some useful information in JSON format:
+
+. The response:
+
+
+[source,json,subs=attributes+]
+----
+response": {
+        "result": {
+            "message": "hello"
+        },
+        "status": "success",
+        "success": true
+    },
+
+----
+
+. The Activation ID:
+
+[source,json,subs=attributes+]
+----
+"activationId": "f14672e45c5a43b88672e45c5a13b8b2"
+----
+
+. Limits and timeouts:
+
+[source,json,subs=attributes+]
+----
+{
+    "key": "limits",
+    "value": {
+        "logs": 10,
+        "memory": 256,
+        "timeout": 60000
+    }
+}
+----
+
+
 
 ==== JavaScript Actions
 
@@ -262,9 +303,6 @@ image::nodejspod.png[OpenWhisk JavaScript Runtime as NodeJS Pod]
 
 ==== Python Actions
 
-
-
-Actions can be explicitly invoked, or run in response to an event. In either case, each run of an action results in an activation record that is identified by a unique activation ID. The input to an action and the result of an action are a dictionary of key-value pairs, where the key is a string and the value a valid JSON value. Actions can also be composed of calls to other actions or a defined sequence of actions.
 
 === Triggers and Rules
 
