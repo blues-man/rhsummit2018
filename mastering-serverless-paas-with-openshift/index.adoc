@@ -131,7 +131,7 @@ image::lab-architecture.png[Lab Architecture]
 
 . From a web browser, open URL below in its own window or tab, using `developer` for the username and `redhatsummit2018` for the password:
 
-* *OpenShift console:* `https://workstation-<YOUR-GUID>.rhpds.opentlc.com:8443`
+* *OpenShift console:* `https://master-<YOUR-GUID>.rhpds.opentlc.com:8443`
 
 . Apache OpenWhisk has been already setup for you in the Lab using templates for OpenShift from https://github.com/projectodd/openwhisk-openshift
 
@@ -143,5 +143,88 @@ image::openshift.png[Projects Overview]
 
 image::openwhisk-project.png[OpenWhisk components running in OpenShift]
 
+=== Configure Workstation
 
+==== Login to OpenShift
 
+SSH to your Lab Workstation
+
+----
+ssh lab-uswe@workstation-<GUID>.rhpds.opentlc.com
+----
+
+Login to OpenShift through OpenShift CLI using `developer` for the username and `redhatsummit2018` for the password, with this command password will be prompted:
+
+----
+$ oc login -u developer https://master.example.com:8443 --insecure-skip-tls-verify=true
+----
+
+==== Configure WSK CLI
+
+The workstation comes with `wsk` CLI preinstalled in order to manage and control OpenWhisk istance, we need to configure it as well for this instance you are running on OpenShift:
+
+----
+$ AUTH_SECRET=$(oc get secret whisk.auth -o yaml | grep "system:" | awk '{print $2}' | base64 --decode)
+$ WSK_ROUTE=$(oc get route/openwhisk --template="{{.spec.host}}")
+$ wsk property set --auth $AUTH_SECRET --apihost $WSK_ROUTE
+----
+
+Verify then that configuration is OK listing all available objects inside our OpenWhisk istance:
+
+----
+ok: whisk auth set. Run 'wsk property get --auth' to see the new value.
+ok: whisk API host set to openwhisk.apps-<GUID>.generic.opentlc.com
+----
+
+Explore all published objects such as actions, rules, triggers:
+
+----
+[lab-user@workstation-REPL ~]$ wsk -i list
+Entities in namespace: default
+packages
+/whisk.system/alarmsWeb                                                private
+/whisk.system/alarms                                                   shared
+/whisk.system/utils                                                    shared
+/whisk.system/watson-speechToText                                      shared
+/whisk.system/slack                                                    shared
+/whisk.system/watson-translator                                        shared
+/whisk.system/watson-textToSpeech                                      shared
+/whisk.system/combinators                                              shared
+/whisk.system/github                                                   shared
+/whisk.system/weather                                                  shared
+/whisk.system/websocket                                                shared
+/whisk.system/samples                                                  shared
+actions
+/whisk.system/alarmsWeb/alarmWebAction                                 private nodejs:6
+/whisk.system/alarms/interval                                          private nodejs:6
+/whisk.system/alarms/once                                              private nodejs:6
+/whisk.system/alarms/alarm                                             private nodejs:6
+/whisk.system/invokerHealthTestAction0                                 private 
+/whisk.system/utils/split                                              private nodejs:6
+/whisk.system/samples/wordCount                                        private nodejs:6
+/whisk.system/utils/cat                                                private nodejs:6
+/whisk.system/samples/greeting                                         private nodejs:6
+/whisk.system/utils/sort                                               private nodejs:6
+/whisk.system/slack/post                                               private nodejs:6
+/whisk.system/utils/echo                                               private nodejs:6
+/whisk.system/samples/curl                                             private nodejs:6
+/whisk.system/samples/helloWorld                                       private nodejs:6
+/whisk.system/utils/smash                                              private nodejs:6
+/whisk.system/watson-speechToText/speechToText                         private nodejs:6
+/whisk.system/utils/date                                               private nodejs:6
+/whisk.system/utils/head                                               private nodejs:6
+/whisk.system/utils/namespace                                          private nodejs:6
+/whisk.system/utils/hosturl                                            private nodejs:6
+/whisk.system/github/webhook                                           private nodejs:6
+/whisk.system/combinators/trycatch                                     private nodejs:6
+/whisk.system/combinators/forwarder                                    private nodejs:6
+/whisk.system/combinators/retry                                        private nodejs:6
+/whisk.system/watson-translator/languageId                             private nodejs:6
+/whisk.system/watson-textToSpeech/textToSpeech                         private nodejs:6
+/whisk.system/watson-translator/translator                             private nodejs:6
+/whisk.system/weather/forecast                                         private nodejs:6
+/whisk.system/websocket/send                                           private nodejs:6
+/whisk.system/combinators/eca                                          private nodejs:6
+triggers
+rules
+----
