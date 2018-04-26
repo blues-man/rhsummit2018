@@ -69,6 +69,17 @@ The demo environment consists of the following systems:
 |=======
 
 
+Runtimes present on `workstation.example.com` for the lab:
+
+[cols="3",options="header"]
+|=======
+|Name              |Version    |
+|OpenJDK |8  | 
+|Maven  | 3 | 
+|Python  |2 |
+|=======
+
+
 NOTE: HAProxy is running on the *workstation* machine.  This provides a level of port forwarding to allow access to the OpenShift console and the JBoss application and other services running on OpenShift to overcome some DNS and routing limitations in the underlying Ravello environment.  This includes port 80, 8443 and 8080-8085.
 
 === Access your Lab Environment
@@ -240,7 +251,7 @@ rules
 
 In OpenWhisk functions can be represented by *Actions*, stateless code snippets that run on the OpenWhisk platform. An action can be written as a JavaScript, Swift, Python or PHP function, a Java method, any binary-compatible executable including Go programs and custom executables packaged as Docker containers.
 
-Actions can be explicitly invoked, or run in response to an event. In either case, each run of an action results in an activation record that is identified by a unique activation ID. The input to an action and the result of an action are a dictionary of key-value pairs, where the key is a string and the value a valid JSON value. Actions can also be composed of calls to other actions or a defined sequence of actions.
+Actions can be explicitly invoked, or run in response to an event. In either case, each run of an action results in an activation record that is identified by a unique *activation ID*. The input to an action and the result of an action are a dictionary of key-value pairs, where the key is a string and the value a valid JSON value. Actions can also be composed of calls to other actions or a defined sequence of actions.
 
 You can start invoking your first Action from the list shown in the OpenWhisk catalog before:
 
@@ -251,6 +262,8 @@ $ wsk -i action invoke /whisk.system/utils/echo -p message hello -b
 Under the hood OpenShift will create new Pods with the proper runtime to run such functions, with a number proportional to the load required and depending of configuration desired.
 
 ----
+$ oc get pods
+..
 wskinvoker-00-7-whisksystem-echo              1/1       Running     0          25s
 wskinvoker-00-8-whisksystem-echo              1/1       Running     0          20s
 ----
@@ -295,11 +308,66 @@ response": {
 }
 ----
 
+The `timeout` shows the time to live for this function inside the same Runtime, for more information about all fields please consult the https://github.com/apache/incubator-openwhisk/blob/master/docs/reference.md#actions[documentation]
 
 
 ==== JavaScript Actions
 
+Let's create our working environment directory
+----
+$ mkdir faas-lab
+----
+
+And our first function to deploy `hellosummit.js`:
+
+[source,json,subs=attributes+]
+----
+function main() {
+    return {payload: 'Hello RH Summit 2018!'};
+}
+
+----
+
+We can then publish it in our Catalog:
+
+----
+$ wsk -i action update hellosummit hellosummit.js
+----
+
+And verify that it is present:
+
+----
+$ wsk -i list | grep hellosummit
+/whisk.system/hellosummit                                              private nodejs:6
+
+----
+
+Finally invoke our Action. Since it run asynchronously, we can actually synchronously with the option `--result`
+
+----
+wsk -i action invoke hellosummit --result
+{
+    "payload": "Hello RH Summit 2018!"
+}
+----
+
+If we want instead run it asynchronously and get the result later on, we can do it through the activation ID:
+
+----
+$ wsk -i action invoke hellosummit
+ok: invoked /_/hellosummit with id 1a37df337d414ff4b7df337d411ff471
+----
+
+----
+$ wsk -i activation result 1a37df337d414ff4b7df337d411ff471
+{
+    "payload": "Hello RH Summit 2018!"
+}
+----
+
 ==== Java Actions
+
+This Lab contains already JDK 8 and Maven on Workstation Lab machine `workstation.example.com` 
 
 ==== Python Actions
 
