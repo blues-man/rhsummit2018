@@ -40,6 +40,8 @@ Required versions of products used:
 |Apache OpenWhisk | rhdemo-b7724ef
 |Red Hat Enterprise Linux |7.4
 |=======
+<<<<<<< Updated upstream
+=======
 
 === OpenShift requirements
 
@@ -63,3 +65,4 @@ image::lab-architecture.png[Lab Architecture]
 . From Summit Workstation you will access the Lab Workstation to create and publish your functions
 
 
+>>>>>>> Stashed changes
