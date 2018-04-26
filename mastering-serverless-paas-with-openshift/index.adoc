@@ -143,6 +143,11 @@ image::openshift.png[Projects Overview]
 
 image::openwhisk-project.png[OpenWhisk components running in OpenShift]
 
+. Verify accessibility to OpenWhisk Route from Left side menu *Applications*->*Routes*->*openwhisk* and click on the URL you see
+
+image::openwhisk.png[OpenWhisk REST endpoint]
+
+
 === Configure Workstation
 
 ==== Login to OpenShift
@@ -228,3 +233,5 @@ actions
 triggers
 rules
 ----
+
+
