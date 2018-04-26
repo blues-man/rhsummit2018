@@ -122,6 +122,13 @@ image::lab-architecture.png[Lab Architecture]
 
 . You will access the lab from your Summit Workstation provided.
 
-. From Summit Workstation you will access the Lab Workstation to create and publish your functions
+. From Summit Workstation you will access the Lab Workstation machine to create and publish your functions
+
+. Functions will run inside OpenWhisk runtimes spreaded across Pods on OpenShift
+
+
+
+
+
 
 
