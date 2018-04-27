@@ -539,6 +539,7 @@ $ AUTH=`oc get secret whisk.auth  -o yaml | grep "system:" | awk '{print $2}'`
 $ curl -vk $WEB_URL
 $ curl -vk -X POST -H 'Content-Type: application/json' -d '{"name": "test"}' $WEB_URL
 ---
+
 ==== Python Actions
 
 We show also how to run Python Actions in OpenWhisk Python Runtime loading multiple files in the same ZIP file to OpenWhisk
