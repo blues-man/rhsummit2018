@@ -538,7 +538,7 @@ $ WEB_URL=`wsk -i action get hello-summit-web --url | awk 'FNR==2{print $1".json
 $ AUTH=`oc get secret whisk.auth  -o yaml | grep "system:" | awk '{print $2}'`
 $ curl -vk $WEB_URL
 $ curl -vk -X POST -H 'Content-Type: application/json' -d '{"name": "test"}' $WEB_URL
----
+----
 
 ==== Python Actions
 
