@@ -172,7 +172,7 @@ An empty faas project is present to install and run OpenWhisk inside OpenShift
 Install OpenWhisk from available https://github.com/projectodd/openwhisk-openshift[templates for OpenShift]:
 
 ----
-$ oc process -f http://bit.ly/rhsummit2018-openwhisk-template| oc create -f - 
+$ oc process -f http://bit.ly/rhsummit2018-openwhisk-template | oc create -f - 
 ----
 
 This will take a few minutes. Verify that all pods eventually enter the `Running` or `Completed` state. For convenience, use the
@@ -527,7 +527,7 @@ public class FunctionAppTest {
 and publish it
 
 ----
-$wsk -i action update --web=true hello-summit-web target/hello-summit-web.jar --main com.example.FunctionApp
+$ wsk -i action update --web=true hello-summit-web target/hello-summit-web.jar --main com.example.FunctionApp
 ----
 
 Now we can consume our REST resource with our HTTP methods and Content types (like JSON for REST):
