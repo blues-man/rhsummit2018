@@ -144,19 +144,9 @@ image::lab-architecture.png[Lab Architecture]
 
 * *OpenShift console:* `https://master-<YOUR-GUID>.rhpds.opentlc.com:8443`
 
-. Apache OpenWhisk has been already setup for you in the Lab using templates for OpenShift from https://github.com/projectodd/openwhisk-openshift
-
 . Once you logged in, you will see a project `faas` 
 
 image::openshift.png[Projects Overview]
-
-. Open project `faas` to verify that OpenWhisk components are present and running
-
-image::openwhisk-project.png[OpenWhisk components running in OpenShift]
-
-. Verify accessibility to OpenWhisk Route from Left side menu *Applications*-> *Routes* -> *openwhisk* and click on the URL you see
-
-image::openwhisk.png[OpenWhisk REST endpoint]
 
 
 === Configure Workstation
@@ -179,7 +169,7 @@ An empty faas project is present to install and run OpenWhisk inside OpenShift
 
 ==== Install OpenWhisk on OpenShift
 
-Install OpenWhisk from available templates for OpenShift:
+Install OpenWhisk from available https://github.com/projectodd/openwhisk-openshift[templates for OpenShift]:
 
 ----
 $ oc process -f http://bit.ly/rhsummit2018-openwhisk-template| oc create -f - 
@@ -199,6 +189,15 @@ $ oc logs -f controller-0 | grep "invoker status changed"
 ----
 
 You should see a message like `invoker status changed to 0 -> Healthy`
+
+
+. From Broweser, open project `faas` to verify that OpenWhisk components are present and running
+
+image::openwhisk-project.png[OpenWhisk components running in OpenShift]
+
+. Verify accessibility to OpenWhisk Route from Left side menu *Applications*-> *Routes* -> *openwhisk* and click on the URL you see
+
+image::openwhisk.png[OpenWhisk REST endpoint]
 
 
 ==== Configure WSK CLI
