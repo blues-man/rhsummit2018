@@ -345,7 +345,7 @@ $ wsk -i list | grep hellosummit
 Finally invoke our Action. Since it run asynchronously, we can actually synchronously with the option `--result`
 
 ----
-wsk -i action invoke hellosummit --result
+$ wsk -i action invoke hellosummit --result
 {
     "payload": "Hello RH Summit 2018!"
 }
@@ -367,12 +367,90 @@ $ wsk -i activation result 1a37df337d414ff4b7df337d411ff471
 
 ==== Java Actions
 
-This Lab contains already JDK 8 and Maven on Workstation Lab machine `workstation.example.com` 
+This Lab contains already JDK 8 and Maven on Workstation Lab machine `workstation.example.com`. In order to create and consume our first Java Action, we can use https://github.com/apache/incubator-openwhisk-devtools[Maven Archetype] from OpenWhisk project that can be used to generate the template Java Action project
+
+----
+$ cd faas-lab
+$ git clone https://github.com/apache/incubator-openwhisk-devtools
+$ cd incubator-openwhisk-devtools/java-action-archetype
+$ mvn -DskipTests clean install
+----
+
+Let's create now our Java Action from OpenWhisk Java example
+
+----
+$ cd faas-lab
+$ mvn archetype:generate \
+  -DarchetypeGroupId=org.apache.openwhisk.java \
+  -DarchetypeArtifactId=java-action-archetype \
+  -DarchetypeVersion=1.0-SNAPSHOT \
+  -DgroupId=com.example \
+  -DartifactId=hello-summit \
+  -Dversion=1.0-SNAPSHOT \
+  -DinteractiveMode=false
+----
+
+Update generated FunctionApp class in `hello-summit/hello-summit/src/main/java/com/example/FunctionApp.java` with this code:
+[source,java,subs=attributes+]
+----
+public class FunctionApp {
+  public static JsonObject main(JsonObject args) {
+    JsonObject response = new JsonObject();
+    response.addProperty("greetings", "Hello! Welcome to RH Summit 2018!");
+    return response;
+  }
+}
+
+----
+
+Then build it
+
+----
+$ cd hello-summit
+$ mvn clean package
+----
+
+and finally deploy it to OpenWhisk
+
+----
+$ wsk -i action create hello-summit target/hello-summit.jar --main com.example.FunctionApp
+----
+
+We can verify that our function is running as an OpenWhisk Action inside the cluster with the same procedure shown above:
+
+Synchronous:
+
+----
+$ wsk -i action invoke hello-summit --result
+----
+
+Asynchronous:
+
+----
+$ wsk -i action invoke hello-summit
+----
+
+[source,json,subs=attributes+]
+----
+{"greetings":  "Hello! Welcome to RH Summit 2018!" }
+----
 
 ==== Python Actions
 
 
+
 === Triggers and Rules
 
-
+----
+wsk -i trigger create every-5-seconds \
+    --feed  /whisk.system/alarms/alarm \
+    --param cron '*/5 * * * * *' \
+    --param maxTriggers 25 \
+    --param trigger_payload "{\"name\":\"RH Summit 2018\",\"place\":\"San Francisco\"}"
+wsk -i rule create \
+    invoke-periodically \
+    every-5-seconds \
+    /whisk.system/samples/greeting
+wsk -i activation poll
+----
 
