@@ -176,7 +176,7 @@ $ oc process -f http://bit.ly/rhsummit2018-openwhisk-template| oc create -f -
 ----
 
 This will take a few minutes. Verify that all pods eventually enter the `Running` or `Completed` state. For convenience, use the
-[watch](https://en.wikipedia.org/wiki/Watch_(Unix)) command.
+`watch` command.
 
 ----
 $ watch oc get all
