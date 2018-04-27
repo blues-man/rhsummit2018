@@ -175,6 +175,32 @@ Login to OpenShift through OpenShift CLI using `developer` for the username and 
 $ oc login -u developer https://master.example.com:8443 --insecure-skip-tls-verify=true
 ----
 
+An empty faas project is present to install and run OpenWhisk inside OpenShift
+
+==== Install OpenWhisk on OpenShift
+
+Install OpenWhisk from available templates for OpenShift:
+
+----
+$ oc process -f http://bit.ly/rhsummit2018-openwhisk-template| oc create -f - 
+----
+
+This will take a few minutes. Verify that all pods eventually enter the `Running` or `Completed` state. For convenience, use the
+[watch](https://en.wikipedia.org/wiki/Watch_(Unix)) command.
+
+----
+$ watch oc get all
+----
+
+The system is ready when the controller recognizes the invoker as healthy:
+
+----
+$ oc logs -f controller-0 | grep "invoker status changed"
+----
+
+You should see a message like `invoker status changed to 0 -> Healthy`
+
+
 ==== Configure WSK CLI
 
 The workstation comes with `wsk` CLI preinstalled in order to manage and control OpenWhisk istance, we need to configure it as well for this instance you are running on OpenShift:
@@ -390,7 +416,7 @@ $ mvn archetype:generate \
   -DinteractiveMode=false
 ----
 
-Update generated FunctionApp class in `hello-summit/hello-summit/src/main/java/com/example/FunctionApp.java` with this code:
+Update generated FunctionApp class in `hello-summit/src/main/java/com/example/FunctionApp.java` with this code:
 [source,java,subs=attributes+]
 ----
 public class FunctionApp {
@@ -401,6 +427,23 @@ public class FunctionApp {
   }
 }
 
+----
+
+Update the Test as well in `hello-summitsrc/test/java/com/example/FunctionAppTest.java` with this code:
+
+[source,java,subs=attributes+]
+----
+public class FunctionAppTest {
+  @Test
+  public void testFunction() {
+    JsonObject args = new JsonObject();
+    JsonObject response = FunctionApp.main(args);
+    assertNotNull(response);
+    String greetings = response.getAsJsonPrimitive("greetings").getAsString();
+    assertNotNull(greetings);
+    assertEquals("Hello! Welcome to RH Summit 2018!", greetings);
+  }
+}
 ----
 
 Then build it
@@ -435,8 +478,104 @@ $ wsk -i action invoke hello-summit
 {"greetings":  "Hello! Welcome to RH Summit 2018!" }
 ----
 
+
+A more interesting example comes with *Web Actions* which are OpenWhisk Actions that can be invoked via HTTP verbs such as GET, POST, PUT, PATCH, DELETE
+
+----
+$ cd faas-lab
+$ mvn archetype:generate \
+  -DarchetypeGroupId=org.apache.openwhisk.java \
+  -DarchetypeArtifactId=java-action-archetype \
+  -DarchetypeVersion=1.0-SNAPSHOT \
+  -DgroupId=com.example \
+  -DartifactId=hello-summit-web \
+  -Dversion=1.0-SNAPSHOT \
+  -DinteractiveMode=false
+----
+
+
+In the same way we did before, let's modify our Java function in `hello-summit-web//src/main/java/com/example/FunctionApp.java`
+to accept parameters so we could intercact with it via REST calls
+
+[source,java,subs=attributes+]
+----
+public class FunctionApp {
+  public static JsonObject main(JsonObject args) {
+    JsonObject response = new JsonObject();
+    response.add("response", args);
+    return response;
+  }
+}
+----
+
+and also the Test in `hello-summit-web/src/test/java/com/example/FunctionAppTest.java`  as follows:
+
+[source,java,subs=attributes+]
+----
+public class FunctionAppTest {
+  @Test
+  public void testFunction() {
+    JsonObject args = new JsonObject();
+    args.addProperty("name", "test");
+    JsonObject response = FunctionApp.main(args);
+    assertNotNull(response);
+    String actual = response.get("response").getAsJsonObject().get("name").getAsString();
+    assertEquals("test", actual);
+  }
+}
+----
+
+and publish it
+
+----
+$wsk -i action update --web=true hello-summit-web target/hello-summit-web.jar --main com.example.FunctionApp
+----
+
+Now we can consume our REST resource with our HTTP methods and Content types (like JSON for REST):
+
+----
+$ WEB_URL=`wsk -i action get hello-summit-web --url | awk 'FNR==2{print $1".json"}'`
+$ AUTH=`oc get secret whisk.auth  -o yaml | grep "system:" | awk '{print $2}'`
+$ curl -vk $WEB_URL
+$ curl -vk -X POST -H 'Content-Type: application/json' -d '{"name": "test"}' $WEB_URL
+---
 ==== Python Actions
 
+We show also how to run Python Actions in OpenWhisk Python Runtime loading multiple files in the same ZIP file to OpenWhisk
+
+Create a file `rhsummit2018.py` as follows:
+
+----
+$ cd faas-lab
+----
+
+[source,python,subs=attributes+]
+----
+def hello():
+ print("Hello RH Summit 2018!")
+----
+
+Then create a file `__main__.py` as follows:
+
+[source,python,subs=attributes+]
+----
+import rhsummit2018
+
+rhsummit2018.hello()
+----
+
+Zip everything and deploy to OpenWhisk using `--kind` option to specify the desired Runtime version (Python 3 in our case)
+
+----
+$ zip helloSummitPython.zip __main__.py rhsummit2018.py
+$ wsk action create hello-summit-python --kind python:3 helloPython.zip
+----
+
+Execute it as usual:
+
+----
+$ wsk -i action invoke hello-summit-python --result
+----
 
 
 === Triggers and Rules
