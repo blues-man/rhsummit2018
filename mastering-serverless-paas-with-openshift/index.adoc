@@ -37,7 +37,7 @@ Required versions of products used:
 |=======
 |Product |Version
 |OpenShift Container Platform |3.9.14
-|Apache OpenWhisk | rhdemo-b7724ef
+|Apache OpenWhisk | rhdemo-6ee19949
 |Red Hat Enterprise Linux |7.4
 |=======
 
@@ -52,7 +52,7 @@ To save time a pre-deployed appliance is provided of 4 Nodes, 1 Master and 3 App
 
 === OpenWhisk requirements
 
-OpenWhisk will run as containerized inside OpenShift, from official image on Docker Hub, properly tagged for OCP (rhdemo-b7724ef)
+OpenWhisk will run as containerized inside OpenShift, from official image on Docker Hub, properly tagged for OCP (rhdemo-6ee19949)
 
 === Environment
 
@@ -80,7 +80,7 @@ Runtimes present on `workstation.example.com` for the lab:
 |=======
 
 
-NOTE: HAProxy is running on the *workstation* machine.  This provides a level of port forwarding to allow access to the OpenShift console and the JBoss application and other services running on OpenShift to overcome some DNS and routing limitations in the underlying Ravello environment.  This includes port 80, 8443 and 8080-8085.
+NOTE: HAProxy is running on the *master* machine.  This provides a level of port forwarding to allow access to the OpenShift console and the OpenWhisk application and other services running on OpenShift to overcome some DNS and routing limitations in the underlying Ravello environment.  This includes port 80, 8443 and 8080-8085.
 
 === Access your Lab Environment
 
@@ -101,14 +101,14 @@ The web browser of your laptop should default to https://www.opentlc.com/guidgra
 * Log in to your control host:
 
 ----
-ssh workstation-<GUID>.rhpds.opentlc.com
+ssh workstation-<GUID>.generic.opentlc.com
 ----
 
 WARNING: *Replace <number> with the GUID assigned to your seat!*
 
 Example: If your GUID is "12e4", do this:
 ----
-ssh lab-user@workstation-12e4.rhpds.opentlc.com
+ssh lab-user@workstation-12e4.generic.opentlc.com
 ----
 
 TIP: The user will default to `lab-user` and SSH key authentication will be used automatically.
@@ -119,7 +119,7 @@ TIP: The user will default to `lab-user` and SSH key authentication will be used
 * Watch for an email with information about how to access your demo environment.
 ** Make note of the email's contents: a list of hostnames, IP addresses, and your GUID.
 ** Whenever you see GUID in the demo instructions, replace it with the GUID provided in the email.
-* You can get real-time updates of your demo environment at https://www.opentlc.com/rhpds-status.
+* You can get real-time updates of your demo environment at https://www.opentlc.com/generic-status.
 ====
 +
 [TIP]
@@ -142,7 +142,7 @@ image::lab-architecture.png[Lab Architecture]
 
 . From a web browser, open URL below in its own window or tab, using `developer` for the username and `redhatsummit2018` for the password:
 
-* *OpenShift console:* `https://master-<YOUR-GUID>.rhpds.opentlc.com:8443`
+* *OpenShift console:* `https://master-<YOUR-GUID>.generic.opentlc.com:8443`
 
 . Once you logged in, you will see a project `faas` 
 
@@ -156,7 +156,7 @@ image::openshift.png[Projects Overview]
 SSH to your Lab Workstation
 
 ----
-ssh lab-user@workstation-<GUID>.rhpds.opentlc.com
+ssh lab-user@workstation-<GUID>.generic.opentlc.com
 ----
 
 Login to OpenShift through OpenShift CLI using `developer` for the username and `redhatsummit2018` for the password, with this command password will be prompted:
@@ -191,7 +191,7 @@ $ oc logs -f controller-0 | grep "invoker status changed"
 You should see a message like `invoker status changed to 0 -> Healthy`
 
 
-. From Broweser, open project `faas` to verify that OpenWhisk components are present and running
+. From Browser, open project `faas` to verify that OpenWhisk components are present and running
 
 image::openwhisk-project.png[OpenWhisk components running in OpenShift]
 
@@ -552,23 +552,28 @@ $ cd faas-lab
 [source,python,subs=attributes+]
 ----
 def hello():
- print("Hello RH Summit 2018!")
+  return "Hello RH Summit 2018!"
 ----
 
-Then create a file `__main__.py` as follows:
+Then create a file `\__main\__.py` as follows:
 
 [source,python,subs=attributes+]
 ----
 import rhsummit2018
 
-rhsummit2018.hello()
+def main(args):
+    greeting = rhsummit2018.hello()
+    print(greeting)
+    return {"greeting": greeting}
 ----
 
 Zip everything and deploy to OpenWhisk using `--kind` option to specify the desired Runtime version (Python 3 in our case)
 
+Python actions always consume a dictionary and produce a dictionary. The entry method for the action is main by default but may be specified explicitly when creating the action with the wsk CLI using `--main`, as with any other action type.
+
 ----
 $ zip helloSummitPython.zip __main__.py rhsummit2018.py
-$ wsk action create hello-summit-python --kind python:3 helloPython.zip
+$ wsk -i action create hello-summit-python --kind python:3 helloSummitPython.zip
 ----
 
 Execute it as usual:
@@ -577,19 +582,69 @@ Execute it as usual:
 $ wsk -i action invoke hello-summit-python --result
 ----
 
+==== Other languages
 
-=== Triggers and Rules
+OpenWhisk Actions are also available for these languages:
+
+* PHP
+* Swift
+* Go
+* Native binaries
+* Docker
+
+You can implement your action in your favourite language from this list following https://github.com/apache/incubator-openwhisk/blob/master/docs/actions.md[Documentation]
+
+
+
+===Triggers, Rules and Alarms
+
+OpenWhisk `Triggers` and `Rules` bring event-driven capabilities to the platform. Events from external and internal event sources are channeled through a trigger, and rules allow your actions to react to these events.
+
+In general `Rules` acts as the glue between Triggers and Actions by creating a loosely coupled association between them, and actions are independent of a Trigger, which means that it may or may not have any Action bound to it.
+
+We can bound our sample actions to a Trigger which would be discovered and executed only at runtime.
+
+Create the Trigger:
 
 ----
-wsk -i trigger create every-5-seconds \
+$ wsk -i trigger create hellosummit-trigger
+
+----
+
+Create the Rule to associate our published Javascript Action `hello-summit' to Trigger:
+
+----
+$ wsk -i rule create hellosummit-rule hellosummit-trigger hellosummit
+----
+
+----
+$ wsk -i trigger fire hellosummit-trigger -v
+----
+
+Alarms are not a core OpenWhisk functionality, but they could be implemented through Triggers and Rules and a resource specification `/whisk.system/alarms/alarm` present in the template for OpenShift.
+
+For instance, if we want to create an `Alarm` that prints every 5 seconds something, we can do it this way:
+
+Create a Trigger with some crontab syntax:
+----
+$ wsk -i trigger create every-5-seconds \
     --feed  /whisk.system/alarms/alarm \
     --param cron '*/5 * * * * *' \
     --param maxTriggers 25 \
     --param trigger_payload "{\"name\":\"RH Summit 2018\",\"place\":\"San Francisco\"}"
+----
+
+Create a `Rule` for it:
+----
 wsk -i rule create \
     invoke-periodically \
     every-5-seconds \
     /whisk.system/samples/greeting
+----
+
+
+Poll activations to get output from the Trigger:
+----
 wsk -i activation poll
 ----
 
