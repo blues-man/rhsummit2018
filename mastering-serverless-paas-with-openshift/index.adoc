@@ -624,9 +624,18 @@ Create the Rule to associate our published Javascript Action `hellosummit` to Tr
 $ wsk -i rule create hellosummit-rule hellosummit-trigger hellosummit
 ----
 
+"Fire" the trigger:
 ----
 $ wsk -i trigger fire hellosummit-trigger -v
 ----
+
+Check result
+
+----
+$ wsk activation result <activation ID>
+----
+
+==== Alarms
 
 Alarms are not a core OpenWhisk functionality, but they could be implemented through Triggers and Rules and a resource specification `/whisk.system/alarms/alarm` present in the template for OpenShift.
 
