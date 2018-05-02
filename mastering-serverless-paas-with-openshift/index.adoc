@@ -576,11 +576,18 @@ $ zip helloSummitPython.zip __main__.py rhsummit2018.py
 $ wsk -i action create hello-summit-python --kind python:3 helloSummitPython.zip
 ----
 
-Execute it as usual:
+Invoke it synchronously to see the result to screen :
 
 ----
 $ wsk -i action invoke hello-summit-python --result
 ----
+
+
+We can also check in the Browser from left menu *Applications* -> *Pods* that our Python code is running in a new Python Pod created for us:
+
+image::pythonpod.png[OpenWhisk Python 3 Pod Runtime]
+
+
 
 ==== Other languages
 
