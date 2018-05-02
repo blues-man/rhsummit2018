@@ -493,7 +493,7 @@ $ mvn archetype:generate \
 ----
 
 
-In the same way we did before, let's modify our Java function in `hello-summit-web//src/main/java/com/example/FunctionApp.java`
+In the same way we did before, let's modify our Java function in `hello-summit-web/src/main/java/com/example/FunctionApp.java`
 to accept parameters so we could intercact with it via REST calls
 
 [source,java,subs=attributes+]
@@ -618,7 +618,7 @@ $ wsk -i trigger create hellosummit-trigger
 
 ----
 
-Create the Rule to associate our published Javascript Action `hello-summit' to Trigger:
+Create the Rule to associate our published Javascript Action `hellosummit` to Trigger:
 
 ----
 $ wsk -i rule create hellosummit-rule hellosummit-trigger hellosummit
