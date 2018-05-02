@@ -603,7 +603,7 @@ You can implement your action in your favourite language from this list followin
 
 
 
-===Triggers, Rules and Alarms
+=== Triggers, Rules and Alarms
 
 OpenWhisk `Triggers` and `Rules` bring event-driven capabilities to the platform. Events from external and internal event sources are channeled through a trigger, and rules allow your actions to react to these events.
 
