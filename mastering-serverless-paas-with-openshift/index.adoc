@@ -24,7 +24,7 @@ After this initial step, we will try out main object of OpenWhisk such
 * Rules
 * Triggers
 
-In particular, we will do a step by step procedure to create and run functions as *Java Actions*, *Node Actions*, *Python Actions*
+In particular, we will do a step by step procedure to create and run functions as *Javascript Actions*, *Java Actions*, *Python Actions*
 
 
 .Goal
