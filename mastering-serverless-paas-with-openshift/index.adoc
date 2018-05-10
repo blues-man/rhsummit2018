@@ -179,7 +179,7 @@ This will take a few minutes. Verify that all pods eventually enter the `Running
 `watch` command.
 
 ----
-$ watch oc get all
+$ watch oc get pods
 ----
 
 The system is ready when the controller recognizes the invoker as healthy:
@@ -428,7 +428,7 @@ public class FunctionApp {
 
 ----
 
-Update the Test as well in `hello-summitsrc/test/java/com/example/FunctionAppTest.java` with this code:
+Update the Test as well in `hello-summit/src/test/java/com/example/FunctionAppTest.java` with this code:
 
 [source,java,subs=attributes+]
 ----
