@@ -142,7 +142,7 @@ image::lab-architecture.png[Lab Architecture]
 
 . From a web browser, open URL below in its own window or tab, using `developer` for the username and `redhatsummit2018` for the password:
 
-* *OpenShift console:* `https://master-<YOUR-GUID>.rhpds.opentlc.com:8443`
+* *OpenShift console:* `https://infranode-<YOUR-GUID>.rhpds.opentlc.com:8443`
 
 . Once you logged in, you will see a project `faas` 
 
