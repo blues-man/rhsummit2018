@@ -179,7 +179,7 @@ This will take a few minutes. Verify that all pods eventually enter the `Running
 `watch` command.
 
 ----
-$ watch oc get all
+$ watch oc get pods
 ----
 
 The system is ready when the controller recognizes the invoker as healthy:
