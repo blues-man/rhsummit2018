@@ -159,7 +159,7 @@ SSH to your Lab Workstation
 ssh lab-user@workstation-<GUID>.rhpds.opentlc.com
 ----
 
-Login to OpenShift through OpenShift CLI using `developer` for the username and `redhatsummit2018` for the password, with this command password will be prompted:
+Login to OpenShift through OpenShift CLI using `developer` for the username and `rhsummit2018` for the password, with this command password will be prompted:
 
 ----
 $ oc login -u developer https://master.example.com:8443 --insecure-skip-tls-verify=true
