@@ -642,7 +642,7 @@ $ wsk -i trigger fire hellosummit-trigger -v
 Check result
 
 ----
-$ wsk activation result <activation ID>
+$ wsk -i activation result <activation ID>
 ----
 
 ==== Alarms
