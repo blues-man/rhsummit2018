@@ -524,6 +524,13 @@ public class FunctionAppTest {
 }
 ----
 
+build it
+
+----
+$ cd hello-summit-web
+$ mvn clean package
+----
+
 and publish it
 
 ----
