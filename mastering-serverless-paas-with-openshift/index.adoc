@@ -101,14 +101,14 @@ The web browser of your laptop should default to https://www.opentlc.com/guidgra
 * Log in to your control host:
 
 ----
-ssh workstation-<GUID>.generic.opentlc.com
+ssh workstation-<GUID>.rhpds.opentlc.com
 ----
 
 WARNING: *Replace <number> with the GUID assigned to your seat!*
 
 Example: If your GUID is "12e4", do this:
 ----
-ssh lab-user@workstation-12e4.generic.opentlc.com
+ssh lab-user@workstation-12e4.rhpds.opentlc.com
 ----
 
 TIP: The user will default to `lab-user` and SSH key authentication will be used automatically.
@@ -142,7 +142,7 @@ image::lab-architecture.png[Lab Architecture]
 
 . From a web browser, open URL below in its own window or tab, using `developer` for the username and `redhatsummit2018` for the password:
 
-* *OpenShift console:* `https://master-<YOUR-GUID>.generic.opentlc.com:8443`
+* *OpenShift console:* `https://master-<YOUR-GUID>.rhpds.opentlc.com:8443`
 
 . Once you logged in, you will see a project `faas` 
 
@@ -156,7 +156,7 @@ image::openshift.png[Projects Overview]
 SSH to your Lab Workstation
 
 ----
-ssh lab-user@workstation-<GUID>.generic.opentlc.com
+ssh lab-user@workstation-<GUID>.rhpds.opentlc.com
 ----
 
 Login to OpenShift through OpenShift CLI using `developer` for the username and `redhatsummit2018` for the password, with this command password will be prompted:
