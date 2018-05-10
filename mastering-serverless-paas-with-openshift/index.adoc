@@ -466,16 +466,19 @@ Synchronous:
 $ wsk -i action invoke hello-summit --result
 ----
 
+[source,json,subs=attributes+]
+----
+{"greetings":  "Hello! Welcome to RH Summit 2018!" }
+----
+
+
 Asynchronous:
 
 ----
 $ wsk -i action invoke hello-summit
 ----
 
-[source,json,subs=attributes+]
-----
-{"greetings":  "Hello! Welcome to RH Summit 2018!" }
-----
+
 
 
 A more interesting example comes with *Web Actions* which are OpenWhisk Actions that can be invoked via HTTP verbs such as GET, POST, PUT, PATCH, DELETE
