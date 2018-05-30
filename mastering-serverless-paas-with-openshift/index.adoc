@@ -41,22 +41,76 @@ Required versions of products used:
 |Red Hat Enterprise Linux |7.4
 |=======
 
-=== OpenShift requirements
+== Requirements to access and perform this lab
 
-OpenShift Container Platform is the product built from the code of its upstream project Origin. 
+=== Base requirements
 
-Initially OpenShift will be deployed using the following appliance:
-https://docs.openshift.com/container-platform/3.9/welcome/index.html[OpenShift 3.9.14]
+* A computer with access to Internet
+* SSH client (for Microsoft Windows users link:https://www.putty.org/[Putty] is recommended)
+* Firefox 17 or higher, or Chromium / Chrome or Safari
++
+[NOTE]
+Grammarly plugin for Chrome causes problems when managing CloudForms. Please deactivate it while doing this lab.
 
-To save time a pre-deployed appliance is provided of 4 Nodes, 1 Master and 3 App nodes
 
-=== OpenWhisk requirements
+=== Obtaining or enabling access credentials
 
-OpenWhisk will run as containerized inside OpenShift, from official image on Docker Hub, properly tagged for OCP (rhdemo-6ee19949)
+. First time login, forgot login or password? Go to https://www.opentlc.com/account 
+
+. Your username should NOT have an *@* in it. 
+
+. Partners MUST request access to RHPDS by sending an email to open-program@redhat.com. 
+
+. Passwords to the services is referred as `<to_be_provided>`. Please contact GPTE or the link:https://mojo.redhat.com/community/marketing/vertical-marketing/horizontal-solutions/people[Horizontal Solutions Team] in case you didn't get them
+
+== Preparation
+
+=== Provision Your Demo Environment
+
+. Log in to the link:https://rhpds.redhat.com/[Red Hat Product Demo System] with your provided credentials. 
++
+image::rhpds_login.png[RHPDS]
+
+[start=2]
+. Go to *Services -> Catalogs*.
+. Under *All Services -> Red Hat Summit 2018*, select *Mastering Serverless PaaS with OpenShift*.
+. On the right pane, click *Order*.
++
+image::rhpds_catalog.png[RHPDS]
+
+[start=5]
+. Please, read carefully all of the information on the resulting page, check the box to confirm you understood the runtime warning message, and then click *Submit*.
++
+image::rhpds_order.png[RHPDS]
+
+[IMPORTANT]
+====
+* It takes about 20 ~ 25 minutes for the demo to load completely and become accessible.
+** Wait for the full demo to load, even if some of its systems are marked "Up."
+* Watch for an email with information about how to access your demo environment.
+** Make note of the email's contents: a list of hostnames, IP addresses, and your GUID.
+** Whenever you see <YOUR-GUID> in the demo instructions, replace it with the GUID provided in the email.
+* You can get real-time updates and status of your demo environment at https://www.opentlc.com/rhpds-status.
+====
+
+[TIP]
+Be mindful of the runtime of your demo environment! It may take several hours to complete the demo, so you may need to extend the runtime. This is especially important in later steps when you are building virtual machines. For information on how to extend runtime and lifetime, see https://www.opentlc.com/lifecycle.
+
 
 === Environment
 
-The demo environment consists of the following systems:
+A full new Lab environment is deployed on every request. To make the environment unique a 4 character identifier is assigned to it (i.e. `1e37`), this identifier is referred in this documentation as *YOUR-GUID*.  
+
+The Lab environment consists of the following architecture:
+
+image::lab-architecture.png[Lab Architecture]
+
+. You will access the lab from your Workstation aka "Summit Workstation"
+
+. From your Workstation you will access the Lab Workstation machine to create and publish your functions
+
+. Functions will run inside OpenWhisk runtimes spreaded across Pods on OpenShift
+
 
 [cols="3",options="header"]
 |=======
@@ -82,65 +136,37 @@ Runtimes present on `workstation.example.com` for the lab:
 
 NOTE: HAProxy is running on the *master* machine.  This provides a level of port forwarding to allow access to the OpenShift console and the OpenWhisk application and other services running on OpenShift to overcome some DNS and routing limitations in the underlying Ravello environment.  This includes port 80, 8443 and 8080-8085.
 
-=== Access your Lab Environment
+==== OpenShift
 
+OpenShift Container Platform is the product built from the code of its upstream project Origin. 
 
-Every attendee gets her/his own lab environment. The lab environments are already started, to access your lab you need a unique *GUID* that is part of the hostnames.
+Initially OpenShift will be deployed using the following appliance:
+https://docs.openshift.com/container-platform/3.9/welcome/index.html[OpenShift 3.9.14]
 
-The web browser of your laptop should default to https://www.opentlc.com/guidgrabber/guidgrabber.cgi. On this web page select the lab your attending and enter the activation key that will be given by the instructor. After submitting your input by clicking "Next" you will see the attendee welcome screen with the needed information:
+To save time a pre-deployed appliance is provided of 4 Nodes, 1 Master and 3 App nodes
 
-* Your unique lab *GUID*
-* A link to the lab guide 
-* The hostnames / URLs you will access
-* A link to the status page
+==== OpenWhisk
 
-=== To access your control host:
-
-* Make sure you have your *GUID*
-* Open a terminal session
-* Log in to your control host:
-
-----
-ssh workstation-<GUID>.rhpds.opentlc.com
-----
-
-WARNING: *Replace <number> with the GUID assigned to your seat!*
-
-Example: If your GUID is "12e4", do this:
-----
-ssh lab-user@workstation-12e4.rhpds.opentlc.com
-----
-
-TIP: The user will default to `lab-user` and SSH key authentication will be used automatically.
-[IMPORTANT]
-====
-* It takes about 15-20 minutes for the demo to load completely and become accessible.
-** Wait for the full demo to load, even if some of its systems are marked "Up."
-* Watch for an email with information about how to access your demo environment.
-** Make note of the email's contents: a list of hostnames, IP addresses, and your GUID.
-** Whenever you see GUID in the demo instructions, replace it with the GUID provided in the email.
-* You can get real-time updates of your demo environment at https://www.opentlc.com/generic-status.
-====
-+
-[TIP]
-Be mindful of the runtime of your demo environment! It may take you longer than the 3 hours allotted to complete the demo, so you may need to extend the runtime. This is especially important in later steps when you are building virtual machines. For information on how to extend runtime and lifetime, see https://www.opentlc.com/lifecycle.
-
-
-
-== Lab OpenWhisk on OpenShift Architecture
-
-image::lab-architecture.png[Lab Architecture]
-
-. You will access the lab from your Summit Workstation provided.
-
-. From Summit Workstation you will access the Lab Workstation machine to create and publish your functions
-
-. Functions will run inside OpenWhisk runtimes spreaded across Pods on OpenShift
+OpenWhisk will run as containerized inside OpenShift, from official image on https://hub.docker.com/u/openwhisk/[Docker Hub], properly tagged for OCP (rhdemo-6ee19949)
 
 
 == Getting Started
 
-. From a web browser, open URL below in its own window or tab, using `developer` for the username and `redhatsummit2018` for the password:
+. Once the system is running, use SSH to access your demo server using your OPENTLC login name and private SSH key.
+
+* Using a Unix/Linux system:
++
+----
+$ ssh -i /path/to/private_key <YOUR-OpenTLC-USERNAME-redhat.com>@workstation-<YOUR-GUID>.rhpds.opentlc.com
+----
+
+* Example for user 'batman' and GUID '1e37', using the default ssh private key:
++
+----
+$ ssh -i ~/.ssh/id_rsa batman-redhat.com@workstation-1e37.rhpds.opentlc.com
+----
+
+. From a web browser, open URL below in its own window or tab, using `developer` for the username and `rhsummit2018` for the password:
 
 * *OpenShift console:* `https://infranode-<YOUR-GUID>.generic.opentlc.com:8443`
 
@@ -179,7 +205,7 @@ This will take a few minutes. Verify that all pods eventually enter the `Running
 `watch` command.
 
 ----
-$ watch oc get pods
+$ watch oc get all
 ----
 
 The system is ready when the controller recognizes the invoker as healthy:
