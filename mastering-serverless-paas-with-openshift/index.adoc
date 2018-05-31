@@ -160,10 +160,10 @@ OpenWhisk will run as containerized inside OpenShift, from official image on htt
 $ ssh -i /path/to/private_key <YOUR-OpenTLC-USERNAME-redhat.com>@workstation-<YOUR-GUID>.rhpds.opentlc.com
 ----
 
-* Example for user 'batman' and GUID '1e37', using the default ssh private key:
+* Example for user 'bbking' and GUID '1e37', using the default ssh private key:
 +
 ----
-$ ssh -i ~/.ssh/id_rsa batman-redhat.com@workstation-1e37.rhpds.opentlc.com
+$ ssh -i ~/.ssh/id_rsa bbking-redhat.com@workstation-1e37.rhpds.opentlc.com
 ----
 
 . From a web browser, open URL below in its own window or tab, using `developer` for the username and `rhsummit2018` for the password:
@@ -182,7 +182,7 @@ image::openshift.png[Projects Overview]
 SSH to your Lab Workstation
 
 ----
-ssh lab-user@workstation-<GUID>.rhpds.opentlc.com
+ssh <YOUR-OpenTLC-USERNAME-redhat.com>@workstation-<YOUR-GUID>.rhpds.opentlc.com
 ----
 
 Login to OpenShift through OpenShift CLI using `developer` for the username and `rhsummit2018` for the password, with this command password will be prompted:
