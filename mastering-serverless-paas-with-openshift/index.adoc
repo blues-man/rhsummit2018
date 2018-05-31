@@ -321,7 +321,7 @@ wskinvoker-00-5-prewarm-nodejs6              1/1       Running     0          12
 
 image::nodejspod.png[OpenWhisk JavaScript Runtime as NodeJS Pod]
 
-Looking at action invokation output we can see some useful information in JSON format:
+Looking at previous action invokation output we can see some useful information in JSON format:
 
 . The response:
 
