@@ -366,8 +366,8 @@ The `timeout` shows the time to live for this function inside the same Runtime, 
 
 Let's create our working environment directory
 ----
-$ mkdir faas-lab
-$ cd faas-lab
+$ mkdir $HOME/faas-lab
+$ cd $HOME/faas-lab
 ----
 
 And our first function to deploy `hellosummit.js`:
@@ -383,7 +383,7 @@ function main() {
 We can then publish it in our Catalog:
 
 ----
-$ wsk -i action update hellosummit hellosummit.js
+$ wsk -i action create hellosummit hellosummit.js
 ----
 
 And verify that it is present:
@@ -422,7 +422,7 @@ $ wsk -i activation result 1a37df337d414ff4b7df337d411ff471
 This Lab contains already JDK 8 and Maven on Workstation Lab machine `workstation.example.com`. In order to create and consume our first Java Action, we can use https://github.com/apache/incubator-openwhisk-devtools[Maven Archetype] from OpenWhisk project that can be used to generate the template Java Action project
 
 ----
-$ cd faas-lab
+$ cd $HOME/faas-lab
 $ git clone https://github.com/apache/incubator-openwhisk-devtools
 $ cd incubator-openwhisk-devtools/java-action-archetype
 $ mvn -DskipTests clean install
@@ -431,7 +431,7 @@ $ mvn -DskipTests clean install
 Let's create now our Java Action from OpenWhisk Java example
 
 ----
-$ cd faas-lab
+$ cd $HOME/faas-lab
 $ mvn archetype:generate \
   -DarchetypeGroupId=org.apache.openwhisk.java \
   -DarchetypeArtifactId=java-action-archetype \
@@ -442,7 +442,7 @@ $ mvn archetype:generate \
   -DinteractiveMode=false
 ----
 
-Update generated FunctionApp class in `hello-summit/src/main/java/com/example/FunctionApp.java` with this code:
+Update generated FunctionApp class in `$HOME/faas-lab/hello-summit/src/main/java/com/example/FunctionApp.java` with this code:
 [source,java,subs=attributes+]
 ----
 public class FunctionApp {
@@ -455,7 +455,7 @@ public class FunctionApp {
 
 ----
 
-Update the Test as well in `hello-summit/src/test/java/com/example/FunctionAppTest.java` with this code:
+Update the Test as well in `$HOME/faas-lab/hello-summit/src/test/java/com/example/FunctionAppTest.java` with this code:
 
 [source,java,subs=attributes+]
 ----
@@ -475,14 +475,14 @@ public class FunctionAppTest {
 Then build it
 
 ----
-$ cd hello-summit
+$ cd $HOME/faas-lab/hello-summit
 $ mvn clean package
 ----
 
 and finally deploy it to OpenWhisk
 
 ----
-$ wsk -i action create hello-summit target/hello-summit.jar --main com.example.FunctionApp
+$ wsk -i action create hello-summit $HOME/faas-lab/hello-summit/target/hello-summit.jar --main com.example.FunctionApp
 ----
 
 We can verify that our function is running as an OpenWhisk Action inside the cluster with the same procedure shown above:
@@ -505,13 +505,22 @@ Asynchronous:
 $ wsk -i action invoke hello-summit
 ----
 
+----
+$ wsk -i activation result 1a37df337d414ff4b7df337d411ff471
+{
+    "greetings": "Hello! Welcome to RH Summit 2018!"
+}
+----
 
+[NOTE]
+If you want to modify again the code and update your actions, you can do it using:
+wsk -i action update <action-name>
 
 
 A more interesting example comes with *Web Actions* which are OpenWhisk Actions that can be invoked via HTTP verbs such as GET, POST, PUT, PATCH, DELETE
 
 ----
-$ cd faas-lab
+$ cd $HOME/faas-lab
 $ mvn archetype:generate \
   -DarchetypeGroupId=org.apache.openwhisk.java \
   -DarchetypeArtifactId=java-action-archetype \
@@ -523,7 +532,7 @@ $ mvn archetype:generate \
 ----
 
 
-In the same way we did before, let's modify our Java function in `hello-summit-web/src/main/java/com/example/FunctionApp.java`
+In the same way we did before, let's modify our Java function in `$HOME/faas-lab/hello-summit-web/src/main/java/com/example/FunctionApp.java`
 to accept parameters so we could intercact with it via REST calls
 
 [source,java,subs=attributes+]
@@ -537,7 +546,7 @@ public class FunctionApp {
 }
 ----
 
-and also the Test in `hello-summit-web/src/test/java/com/example/FunctionAppTest.java`  as follows:
+and also the Test in `$HOME/faas-lab/hello-summit-web/src/test/java/com/example/FunctionAppTest.java`  as follows:
 
 [source,java,subs=attributes+]
 ----
@@ -557,14 +566,14 @@ public class FunctionAppTest {
 build it
 
 ----
-$ cd hello-summit-web
+$ cd $HOME/faas-lab/hello-summit-web
 $ mvn clean package
 ----
 
 and publish it
 
 ----
-$ wsk -i action update --web=true hello-summit-web target/hello-summit-web.jar --main com.example.FunctionApp
+$ wsk -i action create --web=true hello-summit-web $HOME/faas-lab/hello-summit-web/target/hello-summit-web.jar --main com.example.FunctionApp
 ----
 
 Now we can consume our REST resource with our HTTP methods and Content types (like JSON for REST):
@@ -572,9 +581,10 @@ Now we can consume our REST resource with our HTTP methods and Content types (li
 ----
 $ WEB_URL=`wsk -i action get hello-summit-web --url | awk 'FNR==2{print $1".json"}'`
 $ AUTH=`oc get secret whisk.auth  -o yaml | grep "system:" | awk '{print $2}'`
-$ curl -vk $WEB_URL
-$ curl -vk -X POST -H 'Content-Type: application/json' -d '{"name": "test"}' $WEB_URL
+$ curl -sk $WEB_URL
+$ curl -sk -X POST -H 'Content-Type: application/json' -d '{"name": "test"}' $WEB_URL
 ----
+
 
 ==== Python Actions
 
@@ -583,7 +593,7 @@ We show also how to run Python Actions in OpenWhisk Python Runtime loading multi
 Create a file `rhsummit2018.py` as follows:
 
 ----
-$ cd faas-lab
+$ cd $HOME/faas-lab
 ----
 
 [source,python,subs=attributes+]
@@ -592,7 +602,11 @@ def hello():
   return "Hello RH Summit 2018!"
 ----
 
-Then create a file `\__main\__.py` as follows:
+Then create a file
+----
+__main__.py
+----
+as follows:
 
 [source,python,subs=attributes+]
 ----
@@ -600,7 +614,6 @@ import rhsummit2018
 
 def main(args):
     greeting = rhsummit2018.hello()
-    print(greeting)
     return {"greeting": greeting}
 ----
 
@@ -698,6 +711,6 @@ wsk -i rule create \
 
 Poll activations to get output from the Trigger:
 ----
-wsk -i activation poll
+$ wsk -i activation poll
 ----
 
