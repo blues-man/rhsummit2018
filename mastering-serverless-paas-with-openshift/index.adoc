@@ -367,6 +367,7 @@ The `timeout` shows the time to live for this function inside the same Runtime, 
 Let's create our working environment directory
 ----
 $ mkdir faas-lab
+$ cd faas-lab
 ----
 
 And our first function to deploy `hellosummit.js`:
