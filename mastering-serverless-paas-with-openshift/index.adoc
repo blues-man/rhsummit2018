@@ -315,8 +315,8 @@ Under the hood OpenShift will create new Pods with the proper runtime to run suc
 ----
 $ oc get pods
 ..
-wskinvoker-00-7-whisksystem-echo              1/1       Running     0          25s
-wskinvoker-00-8-whisksystem-echo              1/1       Running     0          20s
+wskinvoker-00-4-prewarm-nodejs6              1/1       Running     0          5m
+wskinvoker-00-5-prewarm-nodejs6              1/1       Running     0          12s
 ----
 
 image::nodejspod.png[OpenWhisk JavaScript Runtime as NodeJS Pod]
