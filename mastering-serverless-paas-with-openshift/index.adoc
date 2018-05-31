@@ -679,8 +679,13 @@ $ wsk -i rule create hellosummit-rule hellosummit-trigger hellosummit
 $ wsk -i trigger fire hellosummit-trigger -v
 ----
 
-Check result
+Get fired Action's activation id from this list:
 
+----
+$ wsk -i activation list --limit 1 hellosummit
+----
+
+Get Action's result:
 ----
 $ wsk -i activation result <activation ID>
 ----
